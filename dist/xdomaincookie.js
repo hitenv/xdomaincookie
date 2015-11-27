@@ -1,4 +1,4 @@
-/*! xdomaincookie - v0.0.1 - 2015-11-27
+/*! xdomaincookie - v0.0.2 - 2015-11-27
 * Copyright (c) 2015 ; Licensed  */
 /*jslint browser: true */
 /*global console: false */

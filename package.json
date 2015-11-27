@@ -1,7 +1,7 @@
 {
   "name": "xdomaincookie",
   "author": "hiten vaghela",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "description": "Allows cross domain cookie retrieval",
   "engines": {
