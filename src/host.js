@@ -38,10 +38,11 @@ xDomainCookie.host.retrieve = function(key) {
     return '';
 };
 
-xDomainCookie.host.sendCookieToConsumer = function(key, action, status){
+xDomainCookie.host.sendCookieToConsumer = function(key, action, status, messageId){
     var cookie = xDomainCookie.host.retrieve(key);
 
     var message = {
+        messageId: messageId,
         status: status,
         action: action,
         cookie: cookie
@@ -63,9 +64,9 @@ xDomainCookie.host.init = function(callback){
         if (e.data){
             if (e.data.data && e.data.data){
                 switch (e.data.action){
-                    case 'destroy': xDomainCookie.host.destroy(e.data.data.key); xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'destroy', true); break;
-                    case 'retrieve': xDomainCookie.host.retrieve(e.data.data.key);  xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'retrieve', true); break;
-                    case 'create': xDomainCookie.host.create(e.data.data.key, e.data.data.value, e.data.data.expiration); xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'create', true); break;
+                    case 'destroy': xDomainCookie.host.destroy(e.data.data.key); xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'destroy', true, e.data.messageId); break;
+                    case 'retrieve': xDomainCookie.host.retrieve(e.data.data.key);  xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'retrieve', true, e.data.messageId); break;
+                    case 'create': xDomainCookie.host.create(e.data.data.key, e.data.data.value, e.data.data.expiration); xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'create', true, e.data.messageId); break;
                 }
             }
         }

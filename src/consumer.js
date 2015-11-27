@@ -45,7 +45,9 @@ xDomainCookie.consumer.receiver = function(callback, debug){
 };
 
 xDomainCookie.consumer.create = function(key, value, expiration){
+    var messageId = Math.random();
     var payload = {
+        messageId : messageId,
         action : 'create',
         data: {
             key: key,
@@ -55,10 +57,15 @@ xDomainCookie.consumer.create = function(key, value, expiration){
     };
 
     xDomainCookie.consumer.sendMessageToHost(payload);
+
+    return messageId;
 };
 
 xDomainCookie.consumer.destroy = function(key){
+    var messageId = Math.random();
+
     var payload = {
+        messageId : messageId,
         action : 'destroy',
         data: {
             key: key
@@ -66,10 +73,15 @@ xDomainCookie.consumer.destroy = function(key){
     };
 
     xDomainCookie.consumer.sendMessageToHost(payload);
+
+    return messageId;
 };
 
 xDomainCookie.consumer.retrieve = function(key){
+    var messageId = Math.random();
+
     var payload = {
+        messageId : messageId,
         action : 'retrieve',
         data: {
             key: key
@@ -77,6 +89,8 @@ xDomainCookie.consumer.retrieve = function(key){
     };
 
     xDomainCookie.consumer.sendMessageToHost(payload);
+
+    return messageId;
 };
 
 xDomainCookie.consumer.sendMessageToHost = function (message){
