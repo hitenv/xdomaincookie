@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Hi i am the child</h1>
+
+    <div id="logger" style="width: 75%; background-color: lightblue; overflow-y: scroll; height: 300px;">
+
+    </div>
+    <script src="lib/xdomaincookie.min.js"></script>
+    <script>
+        xDomainCookie.host.init(function(e){
+            var logString = '';
+            if (typeof event.data == 'object'){
+                logString = (JSON && JSON.stringify ? JSON.stringify(event.data) : event.data)
+            } else {
+                logString = event.data;
+            }
+
+            var logger = document.getElementById("logger");
+
+            logger.innerHTML += logString + '<br />';
+        });
+    </script>
+</body>
+</html>

@@ -52,29 +52,40 @@ module.exports = function(grunt) {
         src: ['src/**/*.js', 'test/**/*.js']
       }
     },
-    nodeunit: {
-      files: ['test/**/*_test.js']
-    },
     watch: {
       gruntfile: {
         files: '<%= jshint.gruntfile.src %>',
         tasks: ['jshint:gruntfile']
-      },
-      lib_test: {
-        files: '<%= jshint.lib_test.src %>',
-        tasks: ['jshint:lib_test', 'nodeunit']
       }
-    }
+    },
+    copy: {
+        gruntfile: {
+          files: [
+            {
+              expand:true,
+              cwd: 'src/demo/',
+              src: '**/*.html',
+              dest: 'demo/'
+            },
+            {
+              expand:true,
+              cwd: 'dist/',
+              src: '<%= pkg.name %>.min.js',
+              dest: 'demo/lib'
+            }
+          ]
+        }
+      }
   });
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'copy']);
 
 };
