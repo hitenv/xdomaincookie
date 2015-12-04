@@ -42,6 +42,7 @@ xDomainCookie.host.sendCookieToConsumer = function(key, action, status, messageI
     var cookie = xDomainCookie.host.retrieve(key);
 
     var message = {
+        type : 'xDomainCookie',
         messageId: messageId,
         status: status,
         action: action,
@@ -61,18 +62,22 @@ xDomainCookie.host.init = function(callback){
     var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
 
     eventer(messageEvent,function(e) {
-        if (e.data){
-            if (e.data.data && e.data.data){
-                switch (e.data.action){
-                    case 'destroy': xDomainCookie.host.destroy(e.data.data.key); xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'destroy', true, e.data.messageId); break;
-                    case 'retrieve': xDomainCookie.host.retrieve(e.data.data.key);  xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'retrieve', true, e.data.messageId); break;
-                    case 'create': xDomainCookie.host.create(e.data.data.key, e.data.data.value, e.data.data.expiration); xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'create', true, e.data.messageId); break;
+        if (typeof event.data === 'object') {
+            if (event.data.type === 'xDomainCookie') {
+                if (e.data){
+                    if (e.data.data && e.data.data){
+                        switch (e.data.action){
+                            case 'destroy': xDomainCookie.host.destroy(e.data.data.key); xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'destroy', true, e.data.messageId); break;
+                            case 'retrieve': xDomainCookie.host.retrieve(e.data.data.key);  xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'retrieve', true, e.data.messageId); break;
+                            case 'create': xDomainCookie.host.create(e.data.data.key, e.data.data.value, e.data.data.expiration); xDomainCookie.host.sendCookieToConsumer(e.data.data.key, 'create', true, e.data.messageId); break;
+                        }
+                    }
+                }
+
+                if (callback){
+                    callback(e);
                 }
             }
-        }
-
-        if (callback){
-            callback(e);
         }
     });
 };

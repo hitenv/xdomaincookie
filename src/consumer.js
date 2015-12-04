@@ -40,13 +40,19 @@ xDomainCookie.consumer.receiver = function(callback, debug){
             console.log(e);
         }
 
-        callback(e);
+
+        if (typeof event.data === 'object') {
+            if (event.data.type === 'xDomainCookie') {
+                callback(e);
+            }
+        }
     });
 };
 
 xDomainCookie.consumer.create = function(key, value, expiration){
     var messageId = Math.random();
     var payload = {
+        type : 'xDomainCookie',
         messageId : messageId,
         action : 'create',
         data: {
@@ -65,6 +71,7 @@ xDomainCookie.consumer.destroy = function(key){
     var messageId = Math.random();
 
     var payload = {
+        type : 'xDomainCookie',
         messageId : messageId,
         action : 'destroy',
         data: {
@@ -81,6 +88,7 @@ xDomainCookie.consumer.retrieve = function(key){
     var messageId = Math.random();
 
     var payload = {
+        type : 'xDomainCookie',
         messageId : messageId,
         action : 'retrieve',
         data: {
