@@ -62,8 +62,8 @@ xDomainCookie.host.init = function(callback){
     var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
 
     eventer(messageEvent,function(e) {
-        if (typeof event.data === 'object') {
-            if (event.data.type === 'xDomainCookie') {
+        if (typeof e.data === 'object') {
+            if (e.data.type === 'xDomainCookie') {
                 if (e.data){
                     if (e.data.data && e.data.data){
                         switch (e.data.action){

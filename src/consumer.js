@@ -41,8 +41,8 @@ xDomainCookie.consumer.receiver = function(callback, debug){
         }
 
 
-        if (typeof event.data === 'object') {
-            if (event.data.type === 'xDomainCookie') {
+        if (typeof e.data === 'object') {
+            if (e.data.type === 'xDomainCookie') {
                 callback(e);
             }
         }

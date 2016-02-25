@@ -12,7 +12,7 @@
     </div>
     <script src="lib/xdomaincookie.min.js"></script>
     <script>
-        xDomainCookie.host.init(function(e){
+        xDomainCookie.host.init(function(event){
             var logString = '';
             if (typeof event.data == 'object'){
                 logString = (JSON && JSON.stringify ? JSON.stringify(event.data) : event.data)

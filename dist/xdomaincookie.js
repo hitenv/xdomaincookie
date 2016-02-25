@@ -1,5 +1,5 @@
-/*! xdomaincookie - v0.0.3 - 2015-12-04
-* Copyright (c) 2015 ; Licensed  */
+/*! xdomaincookie - v0.0.3 - 2016-02-25
+* Copyright (c) 2016 ; Licensed  */
 /*jslint browser: true */
 /*global console: false */
 var xDomainCookie = xDomainCookie === undefined ? {} : xDomainCookie;
@@ -40,8 +40,8 @@ xDomainCookie.consumer.receiver = function(callback, debug){
         }
 
 
-        if (typeof event.data === 'object') {
-            if (event.data.type === 'xDomainCookie') {
+        if (typeof e.data === 'object') {
+            if (e.data.type === 'xDomainCookie') {
                 callback(e);
             }
         }
@@ -167,8 +167,8 @@ xDomainCookie.host.init = function(callback){
     var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
 
     eventer(messageEvent,function(e) {
-        if (typeof event.data === 'object') {
-            if (event.data.type === 'xDomainCookie') {
+        if (typeof e.data === 'object') {
+            if (e.data.type === 'xDomainCookie') {
                 if (e.data){
                     if (e.data.data && e.data.data){
                         switch (e.data.action){

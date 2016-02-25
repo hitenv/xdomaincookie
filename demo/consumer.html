@@ -57,7 +57,7 @@
         xDomainCookie.consumer.destroy(key);
     }
 
-    xDomainCookie.consumer.receiver(function (e) {
+    xDomainCookie.consumer.receiver(function (event) {
         var logString = '';
         if (typeof event.data == 'object') {
             logString = (JSON && JSON.stringify ? JSON.stringify(event.data) : event.data)
