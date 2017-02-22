@@ -7,12 +7,13 @@ var xDomainCookie = xDomainCookie === undefined ? {} : xDomainCookie;
 
 xDomainCookie.consumer = {};
 
-xDomainCookie.consumer.init = function(url, callback, debug){
-    window.onload = function() {
+xDomainCookie.consumer.init = function (url, callback, debug) {
+
+    var initialise = function () {
         var iframe = document.createElement('iframe');
         iframe.id = 'xDomainCookieIframe';
 
-        if (debug === true){
+        if (debug === true) {
             iframe.style.display = 'block';
             iframe.style.width = '100%';
             iframe.style.height = '300px';
@@ -24,19 +25,27 @@ xDomainCookie.consumer.init = function(url, callback, debug){
 
         document.body.appendChild(iframe);
 
-        if (callback){
+        if (callback) {
             callback();
         }
     };
+
+    if (window.attachEvent) { 
+        window.attachEvent('onload', initialise); 
+    } else if (window.addEventListener) { 
+        window.addEventListener('load', initialise, false); 
+    } else { 
+        document.addEventListener('load', initialise, false); 
+    }
 };
 
-xDomainCookie.consumer.receiver = function(callback, debug){
+xDomainCookie.consumer.receiver = function (callback, debug) {
     var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
     var eventer = window[eventMethod];
     var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
 
-    eventer(messageEvent,function(e) {
-        if (debug === true){
+    eventer(messageEvent, function (e) {
+        if (debug === true) {
             console.log(e);
         }
 
@@ -49,12 +58,12 @@ xDomainCookie.consumer.receiver = function(callback, debug){
     });
 };
 
-xDomainCookie.consumer.create = function(key, value, expiration){
+xDomainCookie.consumer.create = function (key, value, expiration) {
     var messageId = Math.random();
     var payload = {
-        type : 'xDomainCookie',
-        messageId : messageId,
-        action : 'create',
+        type: 'xDomainCookie',
+        messageId: messageId,
+        action: 'create',
         data: {
             key: key,
             value: value,
@@ -67,13 +76,13 @@ xDomainCookie.consumer.create = function(key, value, expiration){
     return messageId;
 };
 
-xDomainCookie.consumer.destroy = function(key){
+xDomainCookie.consumer.destroy = function (key) {
     var messageId = Math.random();
 
     var payload = {
-        type : 'xDomainCookie',
-        messageId : messageId,
-        action : 'destroy',
+        type: 'xDomainCookie',
+        messageId: messageId,
+        action: 'destroy',
         data: {
             key: key
         }
@@ -84,13 +93,13 @@ xDomainCookie.consumer.destroy = function(key){
     return messageId;
 };
 
-xDomainCookie.consumer.retrieve = function(key){
+xDomainCookie.consumer.retrieve = function (key) {
     var messageId = Math.random();
 
     var payload = {
-        type : 'xDomainCookie',
-        messageId : messageId,
-        action : 'retrieve',
+        type: 'xDomainCookie',
+        messageId: messageId,
+        action: 'retrieve',
         data: {
             key: key
         }
@@ -101,7 +110,7 @@ xDomainCookie.consumer.retrieve = function(key){
     return messageId;
 };
 
-xDomainCookie.consumer.sendMessageToHost = function (message){
+xDomainCookie.consumer.sendMessageToHost = function (message) {
     var ifr = document.getElementById('xDomainCookieIframe');
 
     ifr.contentWindow.postMessage(message, '*');
