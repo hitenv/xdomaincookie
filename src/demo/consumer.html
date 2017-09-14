@@ -58,9 +58,6 @@
     }
 
     xDomainCookie.consumer.receiver(function (event) {
-
-        console.log(xDomainCookie.consumer.messages);
-
         var logString = '';
         if (typeof event.data == 'object') {
             logString = (JSON && JSON.stringify ? JSON.stringify(event.data) : event.data)

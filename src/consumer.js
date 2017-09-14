@@ -65,6 +65,9 @@ xDomainCookie.consumer.receiver = function (callback, debug) {
     var eventer = window[eventMethod];
     var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
 
+    var hostParts = document.location.hostname.split('.');
+    var topDomain = '.'+hostParts[hostParts.length - 2] + '.' + hostParts[hostParts.length - 1];
+
     eventer(messageEvent, function (e) {
         if (debug === true) {
             console.log(e);
@@ -72,13 +75,31 @@ xDomainCookie.consumer.receiver = function (callback, debug) {
 
         if (typeof e.data === 'object') {
             if (e.data.type === 'xDomainCookie') {
+                
+                var messageurl = document.createElement('a');
+                messageurl.href=e.origin;
+
+                var messageurlParts = messageurl.hostname.split('.');
+
+                var messageurltopDomain = '.'+messageurlParts[messageurlParts.length - 2] + '.' + messageurlParts[messageurlParts.length - 1];
+                
                 if (xDomainCookie.consumer.messages.hasOwnProperty(e.data.messageId)){
                     xDomainCookie.consumer.messages[e.data.messageId].messagesRecieved = xDomainCookie.consumer.messages[e.data.messageId].messagesRecieved + 1;
+
+                    if (messageurltopDomain === topDomain){
+                        xDomainCookie.consumer.messages[e.data.messageId].e = e;
+                    }
                     
                     if (xDomainCookie.consumer.messages[e.data.messageId].messagesRecieved === xDomainCookie.consumer.iframes.length){
+                        var returnE = e;
+
+                        if (xDomainCookie.consumer.messages[e.data.messageId].e !== null){
+                            returnE = xDomainCookie.consumer.messages[e.data.messageId].e;
+                        }
+
                         delete xDomainCookie.consumer.messages[e.data.messageId];
-                        
-                        callback(e);
+
+                        callback(returnE);
                     }
                 }
             }
@@ -141,7 +162,8 @@ xDomainCookie.consumer.retrieve = function (key) {
 xDomainCookie.consumer.sendMessageToHost = function (message) {
     xDomainCookie.consumer.messages[message.messageId] = {
         message: message,
-        messagesRecieved: 0 
+        messagesRecieved: 0,
+        e: null 
     };
 
     for (var iframes in xDomainCookie.consumer.iframes){
