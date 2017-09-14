@@ -3,6 +3,7 @@
  */
 /*jslint browser: true */
 
+
 var xDomainCookie = xDomainCookie === undefined ? {} : xDomainCookie;
 
 xDomainCookie.host = {};
@@ -11,11 +12,17 @@ xDomainCookie.host.create = function(key, value, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+d.toUTCString();
-    document.cookie = key + "=" + value + "; " + expires + '; Path=/;';
+    var hostParts = document.location.hostname.split('.');
+    var topDomain = '.'+hostParts[hostParts.length - 2] + '.' + hostParts[hostParts.length - 1];
+
+    document.cookie = key + "=" + value + "; " + expires + '; domain=' + topDomain + ';path=/;';
 };
 
 xDomainCookie.host.destroy = function(key) {
-    document.cookie = key +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    var hostParts = document.location.hostname.split('.');
+    var topDomain = '.'+hostParts[hostParts.length - 2] + '.' + hostParts[hostParts.length - 1];
+
+    document.cookie = key +'=; domain='+ topDomain +';path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 };
 
 xDomainCookie.host.retrieve = function(key) {

@@ -53,9 +53,26 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      gruntfile: {
-        files: '<%= jshint.gruntfile.src %>',
-        tasks: ['jshint:gruntfile']
+      demo: {
+        files: 'src/**/*.js',
+        tasks: ['default']
+      }
+    },
+    connect: {
+      demo: {
+        options: {
+          port: '8069',
+          hostname: '*',
+          open: true,
+          keepalive: false,
+          base: {
+            path: 'demo/',
+            options: {
+              index: 'consumer.html',
+              maxAge: 300000
+            }
+          }
+        }
       }
     },
     copy: {
@@ -75,7 +92,7 @@ module.exports = function(grunt) {
             }
           ]
         }
-      }
+      },
   });
 
   // These plugins provide necessary tasks.
@@ -84,8 +101,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-connect');
 
   // Default task.
   grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'copy']);
-
+  grunt.registerTask('run', ['default','connect:demo', 'watch:demo']);
 };

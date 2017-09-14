@@ -1,4 +1,4 @@
-/*! xdomaincookie - v0.0.5 - 2017-02-22
+/*! xdomaincookie - v0.0.5 - 2017-09-14
 * Copyright (c) 2017 ; Licensed  */
 /*jslint browser: true */
 /*global console: false */
@@ -6,24 +6,45 @@ var xDomainCookie = xDomainCookie === undefined ? {} : xDomainCookie;
 
 xDomainCookie.consumer = {};
 
+xDomainCookie.consumer.iframes = [];
+xDomainCookie.consumer.messages = {};
+
 xDomainCookie.consumer.init = function (url, callback, debug) {
 
+    var urls = [];
+
+    if (Object.prototype.toString.call(url) === '[object Array]') {
+        urls = url;
+    }
+
+    if (Object.prototype.toString.call(url) === '[object String]'){
+        urls = [url];
+    }
+
+
     var initialise = function () {
-        var iframe = document.createElement('iframe');
-        iframe.id = 'xDomainCookieIframe';
+        for (var urlIndex in urls){
+            
+            var iframeIdentfier = 'xDomainCookieIframe_' + urlIndex; 
 
-        if (debug === true) {
-            iframe.style.display = 'block';
-            iframe.style.width = '100%';
-            iframe.style.height = '300px';
-        } else {
-            iframe.style.display = 'none';
+            xDomainCookie.consumer.iframes.push(iframeIdentfier);
+
+            var iframe = document.createElement('iframe');
+            iframe.id = iframeIdentfier;
+    
+            if (debug === true) {
+                iframe.style.display = 'block';
+                iframe.style.width = '100%';
+                iframe.style.height = '300px';
+            } else {
+                iframe.style.display = 'none';
+            }
+    
+            iframe.src = urls[urlIndex];
+    
+            document.body.appendChild(iframe);   
         }
-
-        iframe.src = url;
-
-        document.body.appendChild(iframe);
-
+        
         if (callback) {
             callback();
         }
@@ -48,10 +69,17 @@ xDomainCookie.consumer.receiver = function (callback, debug) {
             console.log(e);
         }
 
-
         if (typeof e.data === 'object') {
             if (e.data.type === 'xDomainCookie') {
-                callback(e);
+                if (xDomainCookie.consumer.messages.hasOwnProperty(e.data.messageId)){
+                    xDomainCookie.consumer.messages[e.data.messageId].messagesRecieved = xDomainCookie.consumer.messages[e.data.messageId].messagesRecieved + 1;
+                    
+                    if (xDomainCookie.consumer.messages[e.data.messageId].messagesRecieved === xDomainCookie.consumer.iframes.length){
+                        delete xDomainCookie.consumer.messages[e.data.messageId];
+                        
+                        callback(e);
+                    }
+                }
             }
         }
     });
@@ -110,12 +138,20 @@ xDomainCookie.consumer.retrieve = function (key) {
 };
 
 xDomainCookie.consumer.sendMessageToHost = function (message) {
-    var ifr = document.getElementById('xDomainCookieIframe');
+    xDomainCookie.consumer.messages[message.messageId] = {
+        message: message,
+        messagesRecieved: 0 
+    };
 
-    ifr.contentWindow.postMessage(message, '*');
+    for (var iframes in xDomainCookie.consumer.iframes){
+        var ifr = document.getElementById(xDomainCookie.consumer.iframes[iframes]);
+        
+        ifr.contentWindow.postMessage(message, '*');
+    }
 };
 
 /*jslint browser: true */
+
 
 var xDomainCookie = xDomainCookie === undefined ? {} : xDomainCookie;
 
@@ -125,11 +161,17 @@ xDomainCookie.host.create = function(key, value, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+d.toUTCString();
-    document.cookie = key + "=" + value + "; " + expires + '; Path=/;';
+    var hostParts = document.location.hostname.split('.');
+    var topDomain = '.'+hostParts[hostParts.length - 2] + '.' + hostParts[hostParts.length - 1];
+
+    document.cookie = key + "=" + value + "; " + expires + '; domain=' + topDomain + ';path=/;';
 };
 
 xDomainCookie.host.destroy = function(key) {
-    document.cookie = key +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    var hostParts = document.location.hostname.split('.');
+    var topDomain = '.'+hostParts[hostParts.length - 2] + '.' + hostParts[hostParts.length - 1];
+
+    document.cookie = key +'=; domain='+ topDomain +';path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 };
 
 xDomainCookie.host.retrieve = function(key) {

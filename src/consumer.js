@@ -7,24 +7,45 @@ var xDomainCookie = xDomainCookie === undefined ? {} : xDomainCookie;
 
 xDomainCookie.consumer = {};
 
+xDomainCookie.consumer.iframes = [];
+xDomainCookie.consumer.messages = {};
+
 xDomainCookie.consumer.init = function (url, callback, debug) {
 
+    var urls = [];
+
+    if (Object.prototype.toString.call(url) === '[object Array]') {
+        urls = url;
+    }
+
+    if (Object.prototype.toString.call(url) === '[object String]'){
+        urls = [url];
+    }
+
+
     var initialise = function () {
-        var iframe = document.createElement('iframe');
-        iframe.id = 'xDomainCookieIframe';
+        for (var urlIndex in urls){
+            
+            var iframeIdentfier = 'xDomainCookieIframe_' + urlIndex; 
 
-        if (debug === true) {
-            iframe.style.display = 'block';
-            iframe.style.width = '100%';
-            iframe.style.height = '300px';
-        } else {
-            iframe.style.display = 'none';
+            xDomainCookie.consumer.iframes.push(iframeIdentfier);
+
+            var iframe = document.createElement('iframe');
+            iframe.id = iframeIdentfier;
+    
+            if (debug === true) {
+                iframe.style.display = 'block';
+                iframe.style.width = '100%';
+                iframe.style.height = '300px';
+            } else {
+                iframe.style.display = 'none';
+            }
+    
+            iframe.src = urls[urlIndex];
+    
+            document.body.appendChild(iframe);   
         }
-
-        iframe.src = url;
-
-        document.body.appendChild(iframe);
-
+        
         if (callback) {
             callback();
         }
@@ -49,10 +70,17 @@ xDomainCookie.consumer.receiver = function (callback, debug) {
             console.log(e);
         }
 
-
         if (typeof e.data === 'object') {
             if (e.data.type === 'xDomainCookie') {
-                callback(e);
+                if (xDomainCookie.consumer.messages.hasOwnProperty(e.data.messageId)){
+                    xDomainCookie.consumer.messages[e.data.messageId].messagesRecieved = xDomainCookie.consumer.messages[e.data.messageId].messagesRecieved + 1;
+                    
+                    if (xDomainCookie.consumer.messages[e.data.messageId].messagesRecieved === xDomainCookie.consumer.iframes.length){
+                        delete xDomainCookie.consumer.messages[e.data.messageId];
+                        
+                        callback(e);
+                    }
+                }
             }
         }
     });
@@ -111,7 +139,14 @@ xDomainCookie.consumer.retrieve = function (key) {
 };
 
 xDomainCookie.consumer.sendMessageToHost = function (message) {
-    var ifr = document.getElementById('xDomainCookieIframe');
+    xDomainCookie.consumer.messages[message.messageId] = {
+        message: message,
+        messagesRecieved: 0 
+    };
 
-    ifr.contentWindow.postMessage(message, '*');
+    for (var iframes in xDomainCookie.consumer.iframes){
+        var ifr = document.getElementById(xDomainCookie.consumer.iframes[iframes]);
+        
+        ifr.contentWindow.postMessage(message, '*');
+    }
 };
