@@ -30,7 +30,7 @@
 <div style="clear: both"></div>
 <script src="lib/xdomaincookie.min.js"></script>
 <script>
-    xDomainCookie.consumer.init(['http://vaghela.superdupa.com:8069/host.html', 'http://hiten.superdupa.com:8069/host.html','http://hiten.superspecial.com:8069/host1.html'], function () {
+    xDomainCookie.consumer.init(['http://vaghela.superdupa.com:8069/host.html', 'http://hiten.superdupa.com:8069/host.html','http://hiten.superspecial.com:8069/host1.html', 'http://localhost:8069/host1.html'], function () {
 
     }, true);
 
@@ -58,9 +58,6 @@
     }
 
     xDomainCookie.consumer.receiver(function (event) {
-
-        console.log(xDomainCookie.consumer.messages);
-
         var logString = '';
         if (typeof event.data == 'object') {
             logString = (JSON && JSON.stringify ? JSON.stringify(event.data) : event.data)

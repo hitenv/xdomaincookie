@@ -66,7 +66,12 @@ xDomainCookie.consumer.receiver = function (callback, debug) {
     var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
 
     var hostParts = document.location.hostname.split('.');
-    var topDomain = '.'+hostParts[hostParts.length - 2] + '.' + hostParts[hostParts.length - 1];
+    var topDomain = '';
+    if (hostParts.length > 1){
+        topDomain = '.'+hostParts[hostParts.length - 2] + '.' + hostParts[hostParts.length - 1];
+    } else {
+        topDomain = hostParts[0];
+    }
 
     eventer(messageEvent, function (e) {
         if (debug === true) {
