@@ -277,3 +277,5 @@ xDomainCookie.host.init = function (callback) {
         }
     });
 };
+
+window.xDomainCookie = xDomainCookie;
