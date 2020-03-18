@@ -1,5 +1,5 @@
-/*! xdomaincookie - v0.0.8 - 2017-09-15
-* Copyright (c) 2017 ; Licensed  */
+/*! xdomaincookie - v0.0.9 - 2020-03-18
+* Copyright (c) 2020 ; Licensed  */
 /*jslint browser: true */
 /*global console: false */
 var xDomainCookie = xDomainCookie === undefined ? {} : xDomainCookie;
@@ -187,18 +187,22 @@ xDomainCookie.host = {};
 xDomainCookie.host.create = function (key, value, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires=" + d.toUTCString();
     var hostParts = document.location.hostname.split('.');
-
     var topDomain = '';
 
+    var path = 'path=/;';
+    var keyVal = key + '=' + value + ';';
+    var expires = 'expires=' + d.toUTCString() + ';';
+    var sameSite = 'SameSite=None;';
+    var secure = 'Secure;';
+
     if (hostParts.length > 1) {
-        topDomain = '.' + hostParts[hostParts.length - 2] + '.' + hostParts[hostParts.length - 1];
+        topDomain = 'domain=' + '.' + hostParts[hostParts.length - 2] + '.' + hostParts[hostParts.length - 1] + ';';
     } else {
-        topDomain = hostParts[0];
+        topDomain = 'domain=' + hostParts[0] + ';';
     }
 
-    document.cookie = key + "=" + value + "; " + expires + '; domain=' + topDomain + ';path=/;';
+    document.cookie = keyVal + expires + topDomain + path + sameSite + secure;
 };
 
 xDomainCookie.host.destroy = function (key) {
@@ -277,5 +281,3 @@ xDomainCookie.host.init = function (callback) {
         }
     });
 };
-
-window.xDomainCookie = xDomainCookie;
