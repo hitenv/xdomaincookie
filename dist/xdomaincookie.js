@@ -1,4 +1,4 @@
-/*! xdomaincookie - v0.0.9 - 2020-03-18
+/*! xdomaincookie - v0.0.11 - 2020-04-02
 * Copyright (c) 2020 ; Licensed  */
 /*jslint browser: true */
 /*global console: false */
@@ -208,6 +208,8 @@ xDomainCookie.host.create = function (key, value, exdays) {
 xDomainCookie.host.destroy = function (key) {
     var hostParts = document.location.hostname.split('.');
     var topDomain = '';
+    var sameSite = 'SameSite=None;';
+    var secure = 'Secure;';
 
     if (hostParts.length > 1) {
         topDomain = '.' + hostParts[hostParts.length - 2] + '.' + hostParts[hostParts.length - 1];
@@ -215,7 +217,7 @@ xDomainCookie.host.destroy = function (key) {
         topDomain = hostParts[0];
     }
 
-    document.cookie = key + '=; domain=' + topDomain + ';path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    document.cookie = key + '=; domain=' + topDomain + ';path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;' + sameSite + secure;
 };
 
 xDomainCookie.host.retrieve = function (key) {
@@ -281,3 +283,5 @@ xDomainCookie.host.init = function (callback) {
         }
     });
 };
+
+window.xDomainCookie = xDomainCookie;
