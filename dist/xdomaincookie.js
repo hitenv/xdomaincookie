@@ -1,4 +1,4 @@
-/*! xdomaincookie - v0.0.11 - 2020-04-02
+/*! xdomaincookie - v0.0.12 - 2020-07-17
 * Copyright (c) 2020 ; Licensed  */
 /*jslint browser: true */
 /*global console: false */
@@ -185,8 +185,7 @@ var xDomainCookie = xDomainCookie === undefined ? {} : xDomainCookie;
 xDomainCookie.host = {};
 
 xDomainCookie.host.create = function (key, value, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var d = new Date(exdays.expires);
     var hostParts = document.location.hostname.split('.');
     var topDomain = '';
 
