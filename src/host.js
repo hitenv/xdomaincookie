@@ -9,8 +9,7 @@ var xDomainCookie = xDomainCookie === undefined ? {} : xDomainCookie;
 xDomainCookie.host = {};
 
 xDomainCookie.host.create = function (key, value, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var d = new Date(exdays.expires);
     var hostParts = document.location.hostname.split('.');
     var topDomain = '';
 
